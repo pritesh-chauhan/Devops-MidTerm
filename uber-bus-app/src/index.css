@@ -31,6 +31,7 @@ body, html, .App, #root, .auth-wrapper {
   justify-content: center;
   flex-direction: column;
   text-align: left;
+  margin-top: 120px;
 }
 
 .auth-inner {
@@ -80,7 +81,7 @@ body, html, .App, #root, .auth-wrapper {
 .custom-select-datepicker {
   position: relative;
   font-family: Arial;
-  width: 144%;
+  width: 160%;
 }
 
 .custom-select select {

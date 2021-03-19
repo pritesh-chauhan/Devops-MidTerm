@@ -9,11 +9,13 @@ export default class HomePage extends Component {
         this.state = {
             source: 'Select Source',
             destination: 'Select Destination',
+            operator: 'Select Operator',
             date: currDate
         };
         this.handleDateChange = this.handleDateChange.bind(this);
         this.handleSourceChange = this.handleSourceChange.bind(this);
         this.handleDestinationChange = this.handleDestinationChange.bind(this);
+        this.handleOperatorChange = this.handleOperatorChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
@@ -29,13 +31,17 @@ export default class HomePage extends Component {
         this.setState({ destination: event.target.value });
     }
 
+    handleOperatorChange(event) {
+        this.setState({ operator: event.target.value });
+    }
+
     handleSubmit(event) {
         console.log(currDate);
         console.log(this.state.date);
         if (this.state.date !== currDate && this.state.date < currDate) {
             alert("Invalid start date selection");
         } else {
-            alert('Your Source is: ' + this.state.source + '\nYour Destination is: ' + this.state.destination + '\nSelected Date: ' + this.state.date);
+            alert('Your Source is: ' + this.state.source + '\nYour Destination is: ' + this.state.destination + + '\nYour Operator: ' + this.state.operator + '\nSelected Date: ' + this.state.date);
         }
         event.preventDefault();
     }
@@ -64,8 +70,15 @@ export default class HomePage extends Component {
                                 <option value="pittsburgh">Pittsburgh</option>
                             </select>
                         </div>
+
                         <div className="form-group">
                             <DatePicker className="custom-select" value={this.state.date} onChange={this.handleDateChange} selected={this.state.date} minDate={moment().toDate()} />
+                            <select  className="custom-select" value={this.state.operator} onChange={this.handleOperatorChange}>
+                                <option value="operator">Select Operator</option>
+                                <option value="greyhound">Greyhound</option>
+                                <option value="yankee">Yankee</option>
+                                <option value="peterpan">Peterpan</option>
+                            </select>
                         </div>
 
                         <button type="submit" className="btn btn-secondary btn-block" value="Submit">Book</button>

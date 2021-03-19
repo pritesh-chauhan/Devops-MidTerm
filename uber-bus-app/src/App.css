@@ -13,6 +13,12 @@
   }
 }
 
+.error {
+  color:#db2269;
+  font-size: 0.625em;
+  display: relative;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -41,9 +47,11 @@ table {
   border-spacing: 0;
   border: 1px solid #ededed;
 }
+
 table tr:last-child td {
   border-bottom: 0;
 }
+
 table th,
 table td {
   margin: 0;
@@ -103,5 +111,12 @@ input {
   border-radius: 5px;
   border: 1px solid #ddd;
   box-shadow: none;
+}
+
+.react-datepicker-wrapper,
+.react-datepicker__input-container,
+.react-datepicker__input-container input {
+  display: block;
+  width: 100%;
 }
 

@@ -5,10 +5,10 @@ export default class ViewBookings extends Component {
         super(props)
         this.state = {
             students: [
-                { id: 1, name: 'Wasif', source: 'Pittsburgh', destination: 'Boston', date:"" },
-                { id: 2, name: 'Ali', source: 'Boston', destination: 'New York', date:"" },
-                { id: 3, name: 'Saad', source: 'Boston', destination: 'Pittsburgh', date:"" },
-                { id: 4, name: 'Asad', source: 'New York', destination: 'Boston', date:"" }
+                { id: 1, name: 'Wasif', source: 'Pittsburgh', destination: 'Boston', date:"", delete: "" },
+                { id: 2, name: 'Ali', source: 'Boston', destination: 'New York', date:"", delete: "" },
+                { id: 3, name: 'Saad', source: 'Boston', destination: 'Pittsburgh', date:"", delete: "" },
+                { id: 4, name: 'Asad', source: 'New York', destination: 'Boston', date:"", delete: "" }
             ]
         }
         this.handleSearchKeyUp = this.keyUpHandler.bind();
@@ -31,10 +31,16 @@ export default class ViewBookings extends Component {
                     <td>{source}</td>
                     <td>{destination}</td>
                     <td>{date}</td>
+                    <td><button value={id} onClick={this.deleteBooking}>Delete</button></td>
                 </tr>
             )
         })
     }
+
+    deleteBooking(e){
+        console.log(e.target.value);
+    }
+
     keyUpHandler() {
         var input, filter, table, tr, td, i, txtValue;
         input = document.getElementById("myInput");
