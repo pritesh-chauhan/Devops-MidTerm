@@ -87,6 +87,18 @@ export default class SignUp extends Component {
         event.preventDefault();
         this.setState({formValid: validateForm(this.state.errors)});
         this.setState({errorCount: countErrors(this.state.errors)});
+        const data = { fname: this.state.fname, lname: this.state.lname, email: this.state.email, password: this.state.password };
+        console.log('submit');
+        console.log(data);
+        fetch('http://127.0.0.1:5000/signup', {
+        method: 'POST',
+        headers: {
+            'Content-type': 'application/json',
+        },
+        body: JSON.stringify(data),
+        })
+        .then(res => res.json())
+        .then(res => console.log(res));
     }
 
     render() {
