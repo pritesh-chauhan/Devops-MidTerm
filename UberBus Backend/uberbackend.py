@@ -26,8 +26,7 @@ app = Flask(__name__)
 CORS(app)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-#our booking dataset
-busbookings = dict()
+ 
 
 def atlas_connect():
     client = pymongo.MongoClient("mongodb+srv://admin:admin@busbookings.27hkg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
@@ -148,20 +147,129 @@ def ssm():
 
 #Endpoints to handle bus bookings
 
-@app.route("/booking", methods=["POST"])
+@app.route("/getOperator/<argument>/<value>/", methods=["POST"])
+def findOp(argument, value):
+    db = mongo_client['busbookings']
+    opcollection = db['operators']
+    #queryObject = {argument:value}
+    # operator => src, dest, date, quantity
+
+    #this line filters the operators based on src and date and quantity
+    query = opcollection.find({"src":argument, "dst":value, "quantity":{"$gt":1}})
+    query.pop('_id') 
+    return jsonify(query)
+
+
+#endpoint to get all bookings
+
+@app.route("/getbookings", methods=["GET"])
+def get_tweets2():
+    db = mongo_client['busbookings']
+    busbookings = db['bookings']
+    return jsonify(busbookings)
+
+@app.route("/addBooking", methods=["POST"])
 def add_booking():
+    db = mongo_client['busbookings']
+    busbookings = db['bookings']
     user = request.json['user']
     source = request.json['source']
     destination = request.json['destination']
-    startdate = request.json['startdate']
-    enddate = request.json['enddate']
-    booking = dict(user=user, source=source, destination=destination,
-                startdate=startdate,enddate=enddate, date=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                _id=str(ObjectId()))
-    busbookings[booking['_id']] = booking
+    operator = request.json['operator']
 
-    insert_one(booking)
+    # find_one based on date, src and dest  => object of operator that will have quantity field just decrement it by one
+    #startdate = request.json['startdate']
+    date = request.json['date']
+    booking = dict(user=user, source=source, destination=destination,
+                    date=date, operator=operator,_id=str(ObjectId()))
+    busbookings[booking['_id']] = booking
+    
+        #return a message if no data is found
+        #send statuscode
     return jsonify(booking)
 
 
-### I have the end points ready, We can add it once we test the functionality!
+#endpoint to register user
+@app.route("/signup", methods=["GET","POST"])
+def signUp(): 
+    db = mongo_client['busbookings']
+    users = db['users']
+
+    fname = request.json['fname']
+    lname = request.json['lname']
+    password = request.json['password']
+    email = request.json['email']
+	
+    result = {}
+    queryObject = {"email":email}
+    user = users.find_one(queryObject)
+    if user != None:
+        return jsonify({"message": "Email Address already exists. Kindly use a different one!"}), 200
+    else:
+        uber_user = { 'fname': fname, 
+        'lname': lname, 
+        'email': email,
+        'password': password
+        }
+
+        query = users.insert_one(uber_user)
+        print("User inserted ", query)
+    
+        if query:
+            return jsonify({"message": "User added successfully"}), 200
+        else:
+            return jsonify({"message": "Error adding user"+ query}), 400
+
+
+# endpoint to login
+@app.route('/sign-in/<argument>/<value>/', methods=['GET']) 
+def findOne(argument, value): 
+    db = mongo_client['busbookings']
+    users = db['users']
+    queryObject = {argument: value} 
+    query = users.find_one(queryObject) 
+    query.pop('_id') 
+    return jsonify(query) 
+
+@app.route('/update/<key>/<value>/<element>/<updateValue>/', methods=['GET']) 
+def update(key, value, element, updateValue): 
+    db = mongo_client['busbookings']
+    users = db['users']
+    queryObject = {key: value} 
+    updateObject = {element: updateValue} 
+    query = users.update_one(queryObject, {'$set': updateObject}) 
+    if query.acknowledged: 
+        return "Update Successful"
+    else: 
+        return "Update Unsuccessful"
+
+##################
+# ADMINISTRATION #
+##################
+
+# This runs once before the first single request
+# Used to bootstrap our collections
+@app.before_first_request
+def before_first_request_func():
+    applyCollectionLevelUpdates()
+
+# This runs once before any request
+@app.before_request
+def before_request_func():
+    applyRecordLevelUpdates()
+
+
+############################
+# INFO on containerization #
+############################
+
+# To containerize a flask app:
+# https://pythonise.com/series/learning-flask/building-a-flask-app-with-docker-compose
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0')
+
+
+
+
+
