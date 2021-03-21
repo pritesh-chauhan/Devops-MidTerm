@@ -316,7 +316,6 @@ def deletebooking():
     else:
         return jsonify({"message": "Error deleting booking"}), 400
 
-
 # endpoint to login
 @app.route('/signin', methods=["GET","POST"]) 
 def signIn(): 
