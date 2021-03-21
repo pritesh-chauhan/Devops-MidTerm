@@ -1,6 +1,6 @@
 import axios from 'axios';
-// const url = "http://localhost:5000/";
-const url = `http://${process.env.REACT_APP_FLASK_IP_ADDRESS}:5000/`;
+// const url = "http://localhost:5000/api/";
+const url = `http://${process.env.REACT_APP_IP_ADDRESS}:5000/api/`;
 
 export const getoperator = booking => {
     return axios

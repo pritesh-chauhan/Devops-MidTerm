@@ -1,0 +1,12 @@
+[Unit]
+Description= Gunicorn instance to serve Uber backend App
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/Devops-MidTerm/uber-bus-backend
+ExecStart=/home/ubuntu/.local/bin/gunicorn --workers 3 -b 127.0.0.1:5000 -t 600 wsgi:app
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

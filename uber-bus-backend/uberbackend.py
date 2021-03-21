@@ -147,7 +147,7 @@ def ssm():
 
 #Endpoints to handle bus bookings
 
-@app.route("/getoperator", methods=["GET","POST"])
+@app.route("/api/getoperator", methods=["GET","POST"])
 def getOperator():
     db = mongo_client['busbookings']
     opcollection = db['operators']
@@ -181,7 +181,7 @@ def getOperator():
     return jsonify(operator), 200
 
 #endpoint to get all bookings
-@app.route("/getbookings", methods=["GET","POST"])
+@app.route("/api/getbookings", methods=["GET","POST"])
 def getAllBookings():
     db = mongo_client['busbookings']
     busbookings = db['bookings']
@@ -198,7 +198,7 @@ def getAllBookings():
     print("Bookings: ", bookings)
     return jsonify(bookings), 200
 
-@app.route("/addbooking", methods=["GET","POST"])
+@app.route("/api/addbooking", methods=["GET","POST"])
 def addBooking():
     db = mongo_client['busbookings']
     busbookings = db['bookings']
@@ -245,7 +245,7 @@ def addBooking():
 
 
 #endpoint to register user
-@app.route("/signup", methods=["GET","POST"])
+@app.route("/api/signup", methods=["GET","POST"])
 def signUp(): 
     db = mongo_client['busbookings']
     users = db['users']
@@ -274,7 +274,7 @@ def signUp():
         else:
             return jsonify({"message": "Error adding user"}), 400
 
-@app.route("/delete", methods=["GET","POST"])
+@app.route("/api/delete", methods=["GET","POST"])
 def deletebooking(): 
     db = mongo_client['busbookings']
     bookings = db['bookings']
@@ -317,7 +317,7 @@ def deletebooking():
         return jsonify({"message": "Error deleting booking"}), 400
 
 # endpoint to login
-@app.route('/signin', methods=["GET","POST"]) 
+@app.route('/api/signin', methods=["GET","POST"]) 
 def signIn(): 
     print('Inside Sign In')
     email = request.json['email']
