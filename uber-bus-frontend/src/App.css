@@ -19,6 +19,12 @@
   display: relative;
 }
 
+.success {
+  color:#97db22;
+  font-size: 0.8em;
+  display: relative;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;

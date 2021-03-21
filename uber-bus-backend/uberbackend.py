@@ -212,7 +212,8 @@ def addBooking():
     opcollection = db['operators']
     opObj = {'source': source,
     'destination': destination,
-    'date': date
+    'date': date,
+    'name': operator
     }
     print('Operator')
     print(operator)
@@ -284,26 +285,36 @@ def deletebooking():
     date = request.json['date']
     operator = request.json['operator']
 
-    result = {}
-    queryObject = {"email":email}
-    user = users.find_one(queryObject)
-    if user != None:
-        return jsonify({"message": "Email Address already exists. Kindly use a different one"}), 200
-    else:
-        booking = {'email': email,
-        'source': source,
-        'destination': destination,
-        'date': date,
-        'operator': operator
-        }
+    booking = {'email': email,
+    'source': source,
+    'destination': destination,
+    'date': date,
+    'operator': operator
+    }
+    query = bookings.delete_one(booking)
+    opcollection = db['operators']
+    opObj = {'source': source,
+    'destination': destination,
+    'date': date,
+    'name': operator
+    }
+    queryOp = opcollection.find_one(opObj)
 
-        query = bookings.delete_one(booking)
-        print("Deleted user: ", query)
-    
-        if query:
-            return jsonify({"message": "User deletion successfully"}), 200
-        else:
-            return jsonify({"message": "Error deleting user"}), 400
+    if queryOp == None:
+        return jsonify({'message': 'Operator not found'}), 200
+
+    opQuantity = { "$set": { 'quantity': queryOp["quantity"]+1 } } 
+    print("New Quantity: ", opQuantity)    
+    print("Deleted user: ", query)    
+    queryOp = opcollection.update_one(opObj, opQuantity)
+
+    if queryOp == None:
+        return jsonify({'message': 'Error in update operator quantity'}), 200
+    print("Updated quantity: ", queryOp)
+    if query:
+        return jsonify({"message": "Booking deletion successfully"}), 200
+    else:
+        return jsonify({"message": "Error deleting booking"}), 400
 
 
 # endpoint to login

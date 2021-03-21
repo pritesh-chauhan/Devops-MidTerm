@@ -11,6 +11,7 @@ export default class ViewBookings extends Component {
             success: ""
         }
         this.handleSearchKeyUp = this.keyUpHandler.bind();
+        this.deleteBooking = this.deleteBooking.bind(this);
     }
 
     deleteBooking(e) {
@@ -32,6 +33,7 @@ export default class ViewBookings extends Component {
                         message: res.data["message"]
                     });
                 } else {
+                    window.location.reload();
                     this.setState({
                         success: res.data["message"]
                     })
@@ -85,6 +87,7 @@ export default class ViewBookings extends Component {
             <div>
                 <br /><br /><br />
                 <input type="text" id="myInput" onKeyUp={this.handleSearchKeyUp} placeholder="Search for names.." title="Type in a name" />
+                {this.state.success !== '' && <span className='success'>{this.state.success}</span>}
                 <table id='bookings'>
                     <tbody>
                         <tr>
@@ -93,7 +96,7 @@ export default class ViewBookings extends Component {
                             <th>Source</th>
                             <th>Destination</th>
                             <th>Date of Journey</th>
-                            <th></th>
+                            <th>Actions</th>
                         </tr>
                         {Object.keys(this.state.bookings).map((booking, index) => (
                             <tr>
