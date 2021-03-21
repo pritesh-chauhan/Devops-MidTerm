@@ -26,108 +26,9 @@ app = Flask(__name__)
 CORS(app)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
- 
-
 def atlas_connect():
     client = pymongo.MongoClient("mongodb+srv://pritesh:pritesh@cluster0.y9bhh.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
     db = client.test   
-
-#methods to add to database
-
-def insert_one(r):
-    start_time = datetime.now()
-    with mongo_client:
-        #start_time_db = datetime.now()
-        db = mongo_client['busbookings']
-        #microseconds_caching_db = (datetime.now() - start_time_db).microseconds
-        #print("*** It took " + str(microseconds_caching_db) + " microseconds to cache mongo handle.")
-
-        print("...insert_one() to mongo: ", r)
-        try:
-            mongo_collection = db['busbookings']
-            result = mongo_collection.insert_one(r)
-            print("inserted _ids: ", result.inserted_id)
-        except Exception as e:
-            print(e)
-
-    microseconds_doing_mongo_work = (datetime.now() - start_time).microseconds
-    print("*** It took " + str(microseconds_doing_mongo_work) + " microseconds to insert_one.") 
-
-def update_one(r):
-    start_time = datetime.now()
-    with mongo_client:
-        #start_time_db = datetime.now()
-        db = mongo_client['busbookings']
-        #microseconds_caching_db = (datetime.now() - start_time_db).microseconds
-        #print("*** It took " + str(microseconds_caching_db) + " microseconds to cache mongo handle.")
-
-        print("...update_one() to mongo: ", r)
-        try:
-            mongo_collection = db['busbookings']
-            result = mongo_collection.update_one(
-                {"_id" : r['_id']},
-                {"$set": r},
-                upsert=True)
-            print ("...update_one() to mongo acknowledged:", result.modified_count)
-        except Exception as e:
-            print(e)
-
-    microseconds_doing_mongo_work = (datetime.now() - start_time).microseconds
-    print("*** It took " + str(microseconds_doing_mongo_work) + " microseconds to update_one.")
-
-def insert_many(r):
-    start_time = datetime.now()
-    with mongo_client:
-        #start_time_db = datetime.now()
-        db = mongo_client['busbookings']
-        #microseconds_caching_db = (datetime.now() - start_time_db).microseconds
-        #print("*** It took " + str(microseconds_caching_db) + " microseconds to cache mongo handle.")
-
-        print("...insert_many() to mongo: ", r.values())
-        try:
-            mongo_collection = db['busbookings']
-            result = mongo_collection.insert_many(r.values())
-            print("inserted _ids: ", result.inserted_ids)
-        except Exception as e:
-            print(e)
-
-    microseconds_doing_mongo_work = (datetime.now() - start_time).microseconds
-    print("*** It took " + str(microseconds_doing_mongo_work) + " microseconds to insert_many.")
-
-def update_many(r):
-    start_time = datetime.now()
-    with mongo_client:
-        #start_time_db = datetime.now()
-        db = mongo_client['busbookings']
-        #microseconds_caching_db = (datetime.now() - start_time_db).microseconds
-        #print("*** It took " + str(microseconds_caching_db) + " microseconds to cache mongo handle.")
-
-        print("...insert_many() to mongo: ", r.values())
-        # much more complicated: use bulkwrite()
-        # https://docs.mongodb.com/manual/reference/method/db.collection.bulkWrite/#db.collection.bulkWrite
-        ops = []
-        records = r
-        print("...bulkwrite() to mongo: ", records)
-        for one_r in records.values():
-            op = dict(
-                    replaceOne=dict(
-                        filter=dict(
-                            _id=one_r['_id']
-                            ),
-                        replacement=one_r,
-                        upsert=True
-                    )
-            )
-            ops.append(op)
-        try:
-            mongo_collection = db['busbookings']
-            result = mongo_collection.bulkWrite(ops, ordered=True)
-            print("matchedCount: ", result.matchedCount)
-        except Exception as e:
-            print(e)
-
-    microseconds_doing_mongo_work = (datetime.now() - start_time).microseconds
-    print("*** It took " + str(microseconds_doing_mongo_work) + " microseconds to update_many.")
 
 def tryexcept(requesto, key, default):
     lhs = None
@@ -146,7 +47,6 @@ def ssm():
 
 
 #Endpoints to handle bus bookings
-
 @app.route("/api/getoperator", methods=["GET","POST"])
 def getOperator():
     db = mongo_client['busbookings']
@@ -342,20 +242,9 @@ def signIn():
             "email": query['email'],
             "isLoggedIn": 'true'}), 200 
 
-    # query.pop('_id') 
-    # return jsonify(query) 
-
-# @app.route('/update/<key>/<value>/<element>/<updateValue>/', methods=['GET']) 
-# def update(key, value, element, updateValue): 
-#     db = mongo_client['busbookings']
-#     users = db['users']
-#     queryObject = {key: value} 
-#     updateObject = {element: updateValue} 
-#     query = users.update_one(queryObject, {'$set': updateObject}) 
-#     if query.acknowledged: 
-#         return "Update Successful"
-#     else: 
-#         return "Update Unsuccessful"
+@app.route('/test', methods=["GET"])
+def test(): 
+    return "Test"
 
 ##################
 # ADMINISTRATION #
@@ -381,4 +270,4 @@ def signIn():
 # https://pythonise.com/series/learning-flask/building-a-flask-app-with-docker-compose
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, host='127.0.0.1')
