@@ -1,0 +1,24 @@
+import React, { Component } from 'react';
+
+class Logout extends Component {
+
+    componentDidMount() {
+        console.log(localStorage.getItem('isLoggedIn'))
+        localStorage.removeItem('isLoggedIn')
+        localStorage.removeItem('email')
+        localStorage.removeItem('fname')
+        localStorage.removeItem('lname')
+        this.props.history.push('/sign-in')
+        window.location.reload();
+    }
+
+    render() {
+        return (
+            <div>
+                Logged Out
+            </div>
+        );
+    }
+}
+
+export default Logout

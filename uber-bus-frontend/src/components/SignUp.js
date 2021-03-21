@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link, Route, Switch } from "react-router-dom";
+import { signUp } from "./AccessApiCalls";
 import Login from "./Login";
 
 const validEmailRegex = RegExp(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/);
@@ -87,18 +88,34 @@ export default class SignUp extends Component {
         event.preventDefault();
         this.setState({formValid: validateForm(this.state.errors)});
         this.setState({errorCount: countErrors(this.state.errors)});
-        const data = { fname: this.state.fname, lname: this.state.lname, email: this.state.email, password: this.state.password };
+        const data = { 
+            fname: this.state.fname, 
+            lname: this.state.lname, 
+            email: this.state.email, 
+            password: this.state.password 
+        };
         console.log('submit');
         console.log(data);
-        fetch('http://127.0.0.1:5000/signup', {
-        method: 'POST',
-        headers: {
-            'Content-type': 'application/json',
-        },
-        body: JSON.stringify(data),
-        })
-        .then(res => res.json())
-        .then(res => console.log(res));
+        signUp(data).then(res => {
+                console.log(res);
+                if (res.status === 200) {
+                    if (res.data["message"].includes("User added successfully")) {
+                        this.props.history.push('/sign-in');
+                        window.location.reload();
+                    } else {
+                        this.setState({
+                            errors:{
+                                fname: '',
+                                lname: '',
+                                email: res.data["message"],
+                                password: ''
+                            }
+                        });
+                    }
+                } else {
+                    alert("Server Error!");
+                }
+            });
     }
 
     render() {
@@ -141,7 +158,7 @@ export default class SignUp extends Component {
                         <button type="submit" className="btn btn-primary btn-block">Sign Up</button>
                         {this.state.errorCount !== null ? <p className="form-status">Form is {formValid ? 'valid ✅' : 'invalid ❌'}</p> : 'Form not submitted'}
                         <p className="forgot-password text-right">
-                            <Link className="nav-link" to={"/sign-in"}>Already registered? Sign up</Link>
+                            <Link className="nav-link" to={"/sign-in"}>Already registered? Sign in</Link>
                             <Switch>
                                 <Route path="/sign-in" component={Login} />
                             </Switch>

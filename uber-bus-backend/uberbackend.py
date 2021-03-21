@@ -20,7 +20,7 @@ from bson.objectid import ObjectId
 # straight mongo access
 from pymongo import MongoClient
 
-mongo_client = MongoClient("mongodb+srv://admin:admin@busbookings.27hkg.mongodb.net/busbookings?retryWrites=true&w=majority")
+mongo_client = MongoClient("mongodb+srv://pritesh:pritesh@cluster0.y9bhh.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
 
 app = Flask(__name__)
 CORS(app)
@@ -29,7 +29,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
  
 
 def atlas_connect():
-    client = pymongo.MongoClient("mongodb+srv://admin:admin@busbookings.27hkg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+    client = pymongo.MongoClient("mongodb+srv://pritesh:pritesh@cluster0.y9bhh.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
     db = client.test   
 
 #methods to add to database
@@ -147,46 +147,100 @@ def ssm():
 
 #Endpoints to handle bus bookings
 
-@app.route("/getOperator/<argument>/<value>/", methods=["POST"])
-def findOp(argument, value):
+@app.route("/getoperator", methods=["GET","POST"])
+def getOperator():
     db = mongo_client['busbookings']
     opcollection = db['operators']
-    #queryObject = {argument:value}
-    # operator => src, dest, date, quantity
-
-    #this line filters the operators based on src and date and quantity
-    query = opcollection.find({"src":argument, "dst":value, "quantity":{"$gt":1}})
-    query.pop('_id') 
-    return jsonify(query)
-
-
-#endpoint to get all bookings
-
-@app.route("/getbookings", methods=["GET"])
-def get_tweets2():
-    db = mongo_client['busbookings']
-    busbookings = db['bookings']
-    return jsonify(busbookings)
-
-@app.route("/addBooking", methods=["POST"])
-def add_booking():
-    db = mongo_client['busbookings']
-    busbookings = db['bookings']
-    user = request.json['user']
     source = request.json['source']
     destination = request.json['destination']
-    operator = request.json['operator']
-
-    # find_one based on date, src and dest  => object of operator that will have quantity field just decrement it by one
-    #startdate = request.json['startdate']
     date = request.json['date']
-    booking = dict(user=user, source=source, destination=destination,
-                    date=date, operator=operator,_id=str(ObjectId()))
-    busbookings[booking['_id']] = booking
+    print(type(date))
+    print('Date: ', date)
+    date = date.split("T")
+    date = date[0]+"T00:00:00.000+00:00"
+    print("Source: ", source)
+    print("Destination: ", destination)
+    print('After Date split: ', date)
+    query = opcollection.find({'source': source,
+    'destination': destination,
+    'date': date
+    })    
+    print(query)
+    if query == None:
+        return jsonify({"message": "No operators found"}), 200
+    operator = {} 
+    i = 0
+    for x in query: 
+        operator[i] = x 
+        operator[i].pop('_id') 
+        i += 1
+    print("Number of Operators: ", len(operator))
+    print("Operators: ", operator)
+    if len(operator) < 1:
+        return jsonify({"message": "No operators has seats available"}), 200
+    return jsonify(operator), 200
+
+#endpoint to get all bookings
+@app.route("/getbookings", methods=["GET","POST"])
+def getAllBookings():
+    db = mongo_client['busbookings']
+    busbookings = db['bookings']
+    email = request.json['email']
+    query = busbookings.find({'email': email})
+    if query == None:
+        return jsonify({"message": "No bookings found"}), 200
+    bookings = {} 
+    i = 0
+    for x in query: 
+        bookings[i] = x 
+        bookings[i].pop('_id') 
+        i += 1
+    print("Bookings: ", bookings)
+    return jsonify(bookings), 200
+
+@app.route("/addbooking", methods=["GET","POST"])
+def addBooking():
+    db = mongo_client['busbookings']
+    busbookings = db['bookings']
+    email = request.json['email']
+    source = request.json['source']
+    destination = request.json['destination']
+    date = request.json['date']
+    date = date.split("T")
+    date = date[0]+"T00:00:00.000+00:00"
+    operator = request.json['operator']
+    opcollection = db['operators']
+    opObj = {'source': source,
+    'destination': destination,
+    'date': date
+    }
+    print('Operator')
+    print(operator)
+    queryOp = opcollection.find_one(opObj)
+
+    if queryOp == None:
+        return jsonify({'message': 'Operator not available'}), 200
+    elif queryOp["quantity"] < 1:
+        return jsonify({'message': 'Requested operator has no tickets available'}), 200
+    opQuantity = { "$set": { 'quantity': queryOp["quantity"]-1 } } 
     
-        #return a message if no data is found
-        #send statuscode
-    return jsonify(booking)
+    queryOp = opcollection.update_one(opObj, opQuantity)
+    if queryOp == None:
+        return jsonify({'message': 'Error in update operator quantity'}), 200
+
+    booking = {'email': email,
+    'source': source,
+    'destination': destination,
+    'date': date,
+    'operator': operator
+    }
+    
+    query = busbookings.insert_one(booking)
+    print("Inserted booking: ", query)
+    if query:
+        return jsonify({"message": "Booking successfull"}), 200
+    else:
+        return jsonify({"message": "Error inserting booking"}), 200
 
 
 #endpoint to register user
@@ -194,7 +248,6 @@ def add_booking():
 def signUp(): 
     db = mongo_client['busbookings']
     users = db['users']
-
     fname = request.json['fname']
     lname = request.json['lname']
     password = request.json['password']
@@ -204,7 +257,7 @@ def signUp():
     queryObject = {"email":email}
     user = users.find_one(queryObject)
     if user != None:
-        return jsonify({"message": "Email Address already exists. Kindly use a different one!"}), 200
+        return jsonify({"message": "Email Address already exists. Kindly use a different one"}), 200
     else:
         uber_user = { 'fname': fname, 
         'lname': lname, 
@@ -218,30 +271,81 @@ def signUp():
         if query:
             return jsonify({"message": "User added successfully"}), 200
         else:
-            return jsonify({"message": "Error adding user"+ query}), 400
+            return jsonify({"message": "Error adding user"}), 400
+
+@app.route("/delete", methods=["GET","POST"])
+def deletebooking(): 
+    db = mongo_client['busbookings']
+    bookings = db['bookings']
+    users = db['users']
+    email = request.json['email']
+    source = request.json['source']
+    destination = request.json['destination']
+    date = request.json['date']
+    operator = request.json['operator']
+
+    result = {}
+    queryObject = {"email":email}
+    user = users.find_one(queryObject)
+    if user != None:
+        return jsonify({"message": "Email Address already exists. Kindly use a different one"}), 200
+    else:
+        booking = {'email': email,
+        'source': source,
+        'destination': destination,
+        'date': date,
+        'operator': operator
+        }
+
+        query = bookings.delete_one(booking)
+        print("Deleted user: ", query)
+    
+        if query:
+            return jsonify({"message": "User deletion successfully"}), 200
+        else:
+            return jsonify({"message": "Error deleting user"}), 400
 
 
 # endpoint to login
-@app.route('/sign-in/<argument>/<value>/', methods=['GET']) 
-def findOne(argument, value): 
+@app.route('/signin', methods=["GET","POST"]) 
+def signIn(): 
+    print('Inside Sign In')
+    email = request.json['email']
+    password = request.json['password']
+    print('Email: ', email)
+    queryObject = {"email" : email}    
     db = mongo_client['busbookings']
     users = db['users']
-    queryObject = {argument: value} 
-    query = users.find_one(queryObject) 
-    query.pop('_id') 
-    return jsonify(query) 
+    query = users.find_one(queryObject)
+    if query == None:
+        return jsonify({'message': 'No user found'}), 200 
+    else:
+        print('Inside else of signin')
+        if query['email'] != email:
+            return jsonify({"message": "Incorrect email address"}), 200
+        elif query['password'] != password:
+            return jsonify({"message": "Incorrect password"}), 200
+        else:
+            return jsonify({"message": "User logged in successfully",
+            "fname": query['fname'],
+            "lname": query['lname'],
+            "email": query['email'],
+            "isLoggedIn": 'true'}), 200 
 
-@app.route('/update/<key>/<value>/<element>/<updateValue>/', methods=['GET']) 
-def update(key, value, element, updateValue): 
-    db = mongo_client['busbookings']
-    users = db['users']
-    queryObject = {key: value} 
-    updateObject = {element: updateValue} 
-    query = users.update_one(queryObject, {'$set': updateObject}) 
-    if query.acknowledged: 
-        return "Update Successful"
-    else: 
-        return "Update Unsuccessful"
+    # query.pop('_id') 
+    # return jsonify(query) 
+
+# @app.route('/update/<key>/<value>/<element>/<updateValue>/', methods=['GET']) 
+# def update(key, value, element, updateValue): 
+#     db = mongo_client['busbookings']
+#     users = db['users']
+#     queryObject = {key: value} 
+#     updateObject = {element: updateValue} 
+#     query = users.update_one(queryObject, {'$set': updateObject}) 
+#     if query.acknowledged: 
+#         return "Update Successful"
+#     else: 
+#         return "Update Unsuccessful"
 
 ##################
 # ADMINISTRATION #
@@ -249,14 +353,14 @@ def update(key, value, element, updateValue):
 
 # This runs once before the first single request
 # Used to bootstrap our collections
-@app.before_first_request
-def before_first_request_func():
-    applyCollectionLevelUpdates()
+# @app.before_first_request
+# def before_first_request_func():
+#     applyCollectionLevelUpdates()
 
-# This runs once before any request
-@app.before_request
-def before_request_func():
-    applyRecordLevelUpdates()
+# # This runs once before any request
+# @app.before_request
+# def before_request_func():
+#     applyRecordLevelUpdates()
 
 
 ############################
