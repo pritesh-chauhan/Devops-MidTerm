@@ -274,7 +274,6 @@ export default class HomePage extends Component {
                                 {this.state.errors.date !== '' && <span className='error'>{this.state.errors.date}</span>}
                                 <button onClick={this.getOperator} className="btn btn-secondary btn-block">Get Operators</button>
                                 <select id="operator" className="custom-select" value={this.state.operator} onChange={this.handleOperatorChange} disabled={this.state.enable} required>
-                                    <option key='-1' value=''></option>
                                     {Object.keys(this.state.operatorsList).map((operator, index) => (
                                         this.state.operatorsList[index]["quantity"] >= 1 ? <option key={index} value={this.state.operatorsList[index]["name"]} >{this.state.operatorsList[index]["name"]}</option> : null
                                     ))}
