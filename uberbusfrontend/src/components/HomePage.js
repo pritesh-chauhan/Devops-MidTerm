@@ -172,7 +172,6 @@ export default class HomePage extends Component {
         console.log(currDate);
         console.log(this.state.date);
         console.log(this.state.operator);
-        // alert('Your Source is: ' + this.state.source + '\nYour Destination is: ' + this.state.destination + '\nYour Operator: ' + this.state.operator + '\nSelected Date: ' + this.state.date);
         const booking = {
             email: localStorage.getItem('email'),
             source: this.state.source,

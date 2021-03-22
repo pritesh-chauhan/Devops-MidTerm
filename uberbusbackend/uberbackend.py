@@ -47,7 +47,7 @@ def ssm():
 
 
 #Endpoints to handle bus bookings
-@app.route("/api/getoperator", methods=["GET","POST"])
+@app.route("/app/getoperator", methods=["GET","POST"])
 def getOperator():
     db = mongo_client['busbookings']
     opcollection = db['operators']
@@ -81,7 +81,7 @@ def getOperator():
     return jsonify(operator), 200
 
 #endpoint to get all bookings
-@app.route("/api/getbookings", methods=["GET","POST"])
+@app.route("/app/getbookings", methods=["GET","POST"])
 def getAllBookings():
     db = mongo_client['busbookings']
     busbookings = db['bookings']
@@ -98,7 +98,7 @@ def getAllBookings():
     print("Bookings: ", bookings)
     return jsonify(bookings), 200
 
-@app.route("/api/addbooking", methods=["GET","POST"])
+@app.route("/app/addbooking", methods=["GET","POST"])
 def addBooking():
     db = mongo_client['busbookings']
     busbookings = db['bookings']
@@ -145,7 +145,7 @@ def addBooking():
 
 
 #endpoint to register user
-@app.route("/api/signup", methods=["GET","POST"])
+@app.route("/app/signup", methods=["GET","POST"])
 def signUp(): 
     db = mongo_client['busbookings']
     users = db['users']
@@ -174,7 +174,7 @@ def signUp():
         else:
             return jsonify({"message": "Error adding user"}), 400
 
-@app.route("/api/delete", methods=["GET","POST"])
+@app.route("/app/delete", methods=["GET","POST"])
 def deletebooking(): 
     db = mongo_client['busbookings']
     bookings = db['bookings']
@@ -217,7 +217,7 @@ def deletebooking():
         return jsonify({"message": "Error deleting booking"}), 400
 
 # endpoint to login
-@app.route('/api/signin', methods=["GET","POST"]) 
+@app.route('/app/signin', methods=["GET","POST"]) 
 def signIn(): 
     print('Inside Sign In')
     email = request.json['email']
@@ -270,4 +270,4 @@ def test():
 # https://pythonise.com/series/learning-flask/building-a-flask-app-with-docker-compose
 
 if __name__ == '__main__':
-    app.run(debug=True, host='127.0.0.1')
+    app.run(debug=True, host='0.0.0.0')
