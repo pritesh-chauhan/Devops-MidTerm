@@ -87,6 +87,57 @@ resource "aws_instance" "uberapp_ec2" {
     private_key = file(var.private_key)
   }
 
+  provisioner "remote-exec" {
+    inline = [
+      "echo 'GUNICORN'",
+      "sudo apt update",
+      "sudo apt install software-properties-common",
+      "sudo add-apt-repository ppa:deadsnakes/ppa -y",
+      "sudo apt install git -y",
+      "sudo apt-get install tmux -y",
+      "sudo apt install python3.9 -y",
+      "sudo apt install -y python3-pip",
+      "git clone https://github.com/pritesh-chauhan/Devops-MidTerm.git",
+      "cd ~/Devops-MidTerm/uberbusbackend",
+      "sudo apt install python3-venv -y",
+      "pip3 install flask",
+      "pip3 install flask-cors",
+      "pip3 install flask-api",
+      "pip3 install gunicorn",
+      "pip3 install wheel",
+      "pip3 install python-dotenv",
+      "pip3 install pymongo",
+      "pip3 install python-dateutil",
+      "pip3 install pytz",
+      "pip3 install dnspython",
+      "pip3 install requests",
+      "sudo mv uberbusbackend.service /etc/systemd/system/uberbusbackend.service",
+      "sudo systemctl daemon-reload",
+      "sudo systemctl start uberbusbackend",
+      "sudo systemctl enable uberbusbackend",
+      "echo 'NGINX'",
+      "cd",
+      "sudo apt-get update",
+      "sudo apt remove -y libcurl4",
+      "sudo apt-get install -y libcurl4 curl",
+      "curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -",
+      "sudo apt-get install -y ruby",
+      "sudo apt-get install -y nodejs",
+      "sudo apt-get install nginx -y",
+      "sudo apt-get install -y build-essential",
+      "cd ~/Devops-MidTerm/uberbusfrontend",
+      "sudo echo 'REACT_APP_IP_ADDRESS=${aws_eip.eip.public_ip}' > .env",
+      "sudo npm install",
+      "sudo npm run build",
+      "cd ~",
+      "sudo rm /etc/nginx/sites-enabled/default",
+      "sudo mv ~/Devops-MidTerm/uberbusfrontend/uberbusfrontend.nginx /etc/nginx/sites-available/",
+      "sudo ln -s /etc/nginx/sites-available/uberbusfrontend.nginx /etc/nginx/sites-enabled/uberbusfrontend.nginx",
+      "sudo systemctl start nginx",
+      "sudo systemctl reload nginx"
+    ]
+  }
+
 }
 
 
