@@ -123,12 +123,12 @@ export default class Login extends Component {
                         <h3>Sign In</h3>
                         <div className="form-group">
                             <label>Email address</label>
-                            <input type="email" name='email' className="form-control" placeholder="Enter email" onChange={this.handleChange} noValidate/>
+                            <input type="email" name='email' className="form-control" placeholder="Enter email" onChange={this.handleChange} noValidate required/>
                             {errors.email.length > 0 && <span className='error'>{errors.email}</span>}
                         </div>
                         <div className="form-group">
                             <label>Password</label>
-                            <input type="password" name='password' className="form-control" placeholder="Enter password" onChange={this.handleChange} noValidate/>
+                            <input type="password" name='password' className="form-control" placeholder="Enter password" onChange={this.handleChange} noValidate required/>
                             {errors.password.length > 0 && <span className='error'>{errors.password}</span>}
                         </div>
                         <div className='info'>

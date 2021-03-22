@@ -9,11 +9,11 @@ export default class ViewBookings extends Component {
         this.state = {
             bookings: [],
             message: "",
-            success: ""
+            success: "",
+            present: false
         }
         this.handleSearchKeyUp = this.keyUpHandler.bind();
         this.deleteBooking = this.deleteBooking.bind(this);
-        this.refreshPage = this.refreshPage.bind(this);
     }
 
     deleteBooking(e) {
@@ -32,33 +32,21 @@ export default class ViewBookings extends Component {
             if (res.status === 200) {
                 if (res.data["message"] === "No bookings found") {
                     this.setState({
-                        message: res.data["message"]
+                        message: res.data["message"],
+                        present: false
                     });
                 } else {
+                    console.log(this.state.bookings)
                     this.setState({
                         success: res.data["message"]
                     });
-                    // this.props.history.push('/view-bookings');
                     this.props.history.push('/home');
-                    // this.refreshPage();
                 }
-            }
-        })
-    }
-
-    refreshPage() {
-        const booking = {}
-        getbookings(booking).then(res => {
-            if (res.status === 200) {
-                if (res.data["message"] === "No bookings found") {
-                    this.setState({
-                        message: res.data["message"]
-                    });
-                } else {
-                    this.setState({
-                        bookings: res.data
-                    })
-                }
+            } else{
+                this.setState({
+                    message: "",
+                    present: false
+                });
             }
         });
     }
@@ -89,19 +77,35 @@ export default class ViewBookings extends Component {
         const booking = {}
         getbookings(booking).then(res => {
             if (res.status === 200) {
-                if (res.data["message"] === "No bookings found") {
+                if(res.data === null){
+                    console.log('Test1')
                     this.setState({
-                        message: res.data["message"]
+                        message: '',
+                        present: false
+                    });
+                }
+                 else if (res.data["message"] === "No bookings found") {
+                    console.log('Test1')
+                    this.setState({
+                        message: res.data["message"],
+                        present: false
                     });
                 } else {
                     this.setState({
-                        bookings: res.data
+                        message: 'Data Present',
+                        bookings: res.data,
+                        present: true
                     })
                 }
+            } else{
+                console.log('Test2')
+                this.setState({
+                    message: '',
+                    present: false
+                });
             }
         })
     }
-
 
     render() {
         return (
@@ -110,9 +114,11 @@ export default class ViewBookings extends Component {
                 <Navbar />
             <div>
                 <br /><br /><br />
-                <input type="text" id="myInput" onKeyUp={this.handleSearchKeyUp} placeholder="Search for names.." title="Type in a name" />
+                <table id="bookings" hidden={this.state.present}><tr>No bookings available</tr></table>
+                <input type="text" id="myInput" onKeyUp={this.handleSearchKeyUp} placeholder="Search for names.." title="Type in a name" hidden={!this.state.present}/>
                 {this.state.success !== '' && <span className='success'>{this.state.success}</span>}
-                <table id='bookings'>
+
+                <table id='bookings' hidden={!this.state.present}>
                     <tbody>
                         <tr>
                             <th>Sr No.</th>
@@ -129,7 +135,7 @@ export default class ViewBookings extends Component {
                                 <td>{this.state.bookings[index]["source"]}</td>
                                 <td>{this.state.bookings[index]["destination"]}</td>
                                 <td>{this.state.bookings[index]["date"].substring(0, 10)}</td>
-                                <td><button value={this.state.bookings[index]["operator"]+","+this.state.bookings[index]["source"]+","+this.state.bookings[index]["destination"]+","+this.state.bookings[index]["date"]} onClick={this.deleteBooking}>Delete</button></td>
+                                <td><button value={this.state.bookings[index]["operator"] + "," + this.state.bookings[index]["source"] + "," + this.state.bookings[index]["destination"] + "," + this.state.bookings[index]["date"]} onClick={this.deleteBooking}>Delete</button></td>
                             </tr>
                         ))}
                     </tbody>

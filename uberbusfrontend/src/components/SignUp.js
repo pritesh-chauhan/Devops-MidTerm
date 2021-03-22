@@ -127,31 +127,31 @@ export default class SignUp extends Component {
                         <h3>Sign Up</h3>
                         <div className="form-group">
                             <label>First name</label>
-                            <input type="text" className="form-control" placeholder="First name" name="fname" onChange={this.handleChange} noValidate/>
+                            <input type="text" className="form-control" placeholder="First name" name="fname" onChange={this.handleChange} noValidate required/>
                             {errors.fname.length > 0 && <span className='error'>{errors.fname}</span>}
                         </div>
 
                         <div className="form-group">
                             <label>Last name</label>
-                            <input type="text" className="form-control" placeholder="Last name" name="lname" onChange={this.handleChange} noValidate/>
+                            <input type="text" className="form-control" placeholder="Last name" name="lname" onChange={this.handleChange} noValidate required/>
                             {errors.lname.length > 0 && <span className='error'>{errors.lname}</span>}
                         </div>
 
                         <div className="form-group">
                             <label>Email address</label>
-                            <input type="email" className="form-control" placeholder="Enter email" name="email" onChange={this.handleChange} noValidate/>
+                            <input type="email" className="form-control" placeholder="Enter email" name="email" onChange={this.handleChange} noValidate required/>
                             {errors.email.length > 0 && <span className='error'>{errors.email}</span>}
                         </div>
 
                         <div className="form-group">
                             <label>Password</label>
-                            <input type="password" className="form-control" placeholder="Enter password" name="password" onChange={this.handleChange} noValidate/>
+                            <input type="password" className="form-control" placeholder="Enter password" name="password" onChange={this.handleChange} noValidate required/>
                             {errors.password.length > 0 && <span className='error'>{errors.password}</span>}
                         </div>
 
                         <div className="form-group">
                             <label>Re-Enter Password</label>
-                            <input type="password" className="form-control" placeholder="Re-Enter password" name="repassword" onChange={this.handleChange} noValidate/>
+                            <input type="password" className="form-control" placeholder="Re-Enter password" name="repassword" onChange={this.handleChange} noValidate required/>
                             {errors.repassword.length > 0 && <span className='error'>{errors.repassword}</span>}
                         </div>
 
