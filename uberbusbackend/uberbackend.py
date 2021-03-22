@@ -13,6 +13,7 @@ import json
 import random
 import string
 import pathlib
+import hashlib, binascii
 import io
 from uuid import UUID
 from bson.objectid import ObjectId
@@ -25,11 +26,11 @@ app = Flask(__name__)
 CORS(app)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-def encrypt(password):
-    return "UberBus@"+password+"2021"
+# def encrypt(password):
+    # return "UberBus@"+password+"2021"
 
-def decrypt(password):
-    return password[8:-4]
+# def decrypt(password):
+#     return password[8:-4]
 
 def atlas_connect():
     client = pymongo.MongoClient(
@@ -163,9 +164,16 @@ def signUp():
     users = db['users']
     fname = request.json['fname']
     lname = request.json['lname']
-    # password = request.json['password']
+    password = request.json['password']
     email = request.json['email']
-    password = encrypt(request.json['password'])
+    # password = encrypt(request.json['password'])
+    # print(password)
+    salt = hashlib.sha256(os.urandom(60)).hexdigest().encode('ascii')
+    pwdhash = hashlib.pbkdf2_hmac('sha512', password.encode('utf-8'), 
+                                salt, 100000)
+    pwdhash = binascii.hexlify(pwdhash)
+    print("Password: ")
+    password = (salt + pwdhash).decode('ascii')
     print(password)
     result = {}
     queryObject = {"email": email}
@@ -238,8 +246,8 @@ def signIn():
     print('Inside Sign In')
     email = request.json['email']
     password = request.json['password']
-    print(password.encode('ascii'))
-    print(password.encode('utf-8'))
+    # print(password.encode('ascii'))
+    # print(password.encode('utf-8'))
     print('Email: ', email)
     queryObject = {"email": email}
     db = mongo_client['busbookings']
@@ -249,14 +257,21 @@ def signIn():
     if query == None:
         return jsonify({'message': 'No user found'}), 200
     else:
-        print(query['password'])
-        checkDBPass = decrypt(query['password'])
-        print('------------')
-        print(checkDBPass,"--------",password)
+        # print(query['password'])
+        # checkDBPass = decrypt(query['password'])
+        # print('------------')
+        # print(checkDBPass,"--------",password)
         print('Inside else of signin')
+        salt = query['password'][:64]
+        stored_password = query['password'][64:]
+        pwdhash = hashlib.pbkdf2_hmac('sha512', 
+                                  password.encode('utf-8'), 
+                                  salt.encode('ascii'), 
+                                  100000)
+        pwdhash = binascii.hexlify(pwdhash).decode('ascii')
         if query['email'] != email:
             return jsonify({"message": "Incorrect email address"}), 200
-        elif checkDBPass != password:
+        elif pwdhash != stored_password:
             return jsonify({"message": "Incorrect password"}), 200
         else:
             return jsonify({"message": "User logged in successfully",
