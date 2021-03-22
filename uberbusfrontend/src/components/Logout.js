@@ -8,8 +8,7 @@ class Logout extends Component {
         localStorage.removeItem('email')
         localStorage.removeItem('fname')
         localStorage.removeItem('lname')
-        this.props.history.push('/sign-in')
-        window.location.reload();
+        this.props.history.push('/sign-in');
     }
 
     render() {

@@ -13,6 +13,7 @@ export default class ViewBookings extends Component {
         }
         this.handleSearchKeyUp = this.keyUpHandler.bind();
         this.deleteBooking = this.deleteBooking.bind(this);
+        this.refreshPage = this.refreshPage.bind(this);
     }
 
     deleteBooking(e) {
@@ -34,13 +35,32 @@ export default class ViewBookings extends Component {
                         message: res.data["message"]
                     });
                 } else {
-                    window.location.reload();
                     this.setState({
                         success: res.data["message"]
-                    })
+                    });
+                    // this.props.history.push('/view-bookings');
+                    this.props.history.push('/home');
+                    // this.refreshPage();
                 }
             }
         })
+    }
+
+    refreshPage() {
+        const booking = {}
+        getbookings(booking).then(res => {
+            if (res.status === 200) {
+                if (res.data["message"] === "No bookings found") {
+                    this.setState({
+                        message: res.data["message"]
+                    });
+                } else {
+                    this.setState({
+                        bookings: res.data
+                    })
+                }
+            }
+        });
     }
 
     keyUpHandler() {

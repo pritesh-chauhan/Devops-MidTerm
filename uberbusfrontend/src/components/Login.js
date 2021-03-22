@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { signIn } from './AccessApiCalls';
+import Navbar from "./Navbar";
 
 const validEmailRegex = RegExp(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/);
 const validateForm = (errors) => {
@@ -114,6 +115,8 @@ export default class Login extends Component {
     render() {
         const {errors} = this.state;
         return (
+            <>
+            <Navbar />
             <div className="auth-wrapper">
                 <div className="auth-inner">
                     <form onSubmit={this.handleSubmit} noValidate>
@@ -135,6 +138,7 @@ export default class Login extends Component {
                     </form>
                 </div>
             </div>
+            </>
         );
     }
 }
