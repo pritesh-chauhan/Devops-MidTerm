@@ -9,6 +9,7 @@ import SignUp from "./components/SignUp";
 import Logout from './components/Logout';
 import ViewBookings from './components/ViewBookings';
 import Navbar from './components/Navbar';
+import Error from './components/Error';
 
 function App() {
   return (
@@ -17,11 +18,12 @@ function App() {
         <Navbar />
         <Switch>
           <Route exact path='/' component={Login} />
-          <Route path="/view-bookings" component={ViewBookings} />
-          <Route path="/home" component={Home} />
-          <Route path="/sign-in" component={Login} />
-          <Route path="/sign-up" component={SignUp} />
-          <Route path="/logout" component={Logout} />
+          <Route exact path="/view-bookings" component={ViewBookings} />
+          <Route exact path="/home" component={Home} />
+          <Route exact path="/sign-in" component={Login} />
+          <Route exact path="/sign-up" component={SignUp} />
+          <Route exact path="/logout" component={Logout} />
+          <Route path="/" component={Error} />
         </Switch>
       </Router>
     </div>
