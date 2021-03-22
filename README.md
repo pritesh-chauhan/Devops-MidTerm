@@ -18,17 +18,13 @@ bash
 cd Devops-MidTerm/uberbusfrontend
 
 
-bash
+```
 npm install
 
-
-bash
 npm build
 
-
-bash
 npm start
-
+ ```
 
 3. Python in local
 
