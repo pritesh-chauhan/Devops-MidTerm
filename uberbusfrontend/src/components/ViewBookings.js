@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { getbookings } from "./BookingApiCalls";
 import { deletebooking } from "./BookingApiCalls";
+import Navbar from "./Navbar";
 
 export default class ViewBookings extends Component {
     constructor(props) {
@@ -84,6 +85,9 @@ export default class ViewBookings extends Component {
 
     render() {
         return (
+            
+            <>
+                <Navbar />
             <div>
                 <br /><br /><br />
                 <input type="text" id="myInput" onKeyUp={this.handleSearchKeyUp} placeholder="Search for names.." title="Type in a name" />
@@ -111,6 +115,7 @@ export default class ViewBookings extends Component {
                     </tbody>
                 </table>
             </div>
+            </>
         )
     }
 }

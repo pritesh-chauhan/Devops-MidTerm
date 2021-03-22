@@ -35,7 +35,7 @@ export default class Login extends Component {
     componentDidMount() {
         if (localStorage.getItem('isLoggedIn') !== null) {
             this.props.history.push('/home')
-            window.location.reload();
+            // window.location.reload();
         }
     }
 

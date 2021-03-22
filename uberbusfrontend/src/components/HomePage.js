@@ -3,6 +3,7 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import moment from 'moment';
 import { addbooking, getoperator } from "./BookingApiCalls";
+import Navbar from "./Navbar";
 var currDate = '';
 export default class HomePage extends Component {
     constructor(props) {
@@ -29,15 +30,15 @@ export default class HomePage extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    componentDidMount() {
-        if (localStorage.getItem('isLoggedIn') === null) {
-            this.props.history.push('/');
-        }
-        else if (localStorage.getItem('isLoggedIn') === 'true') {
-            localStorage.setItem('isLoggedIn', 'false');
-            window.location.reload();
-        }
-    }
+    // componentDidMount() {
+    //     if (localStorage.getItem('isLoggedIn') === null) {
+    //         this.props.history.push('/');
+    //     }
+    //     else if (localStorage.getItem('isLoggedIn') === 'true') {
+    //         localStorage.setItem('isLoggedIn', 'false');
+    //         window.location.reload();
+    //     }
+    // }
 
     handleSourceChange(event) {
         this.setState({ 
@@ -220,6 +221,8 @@ export default class HomePage extends Component {
 
     render() {
         return (
+            <>
+                <Navbar />
             <div className="auth-wrapper">
                 <div className="auth-inner">
                     <form onSubmit={this.handleSubmit}>
@@ -260,6 +263,7 @@ export default class HomePage extends Component {
                     </form>
                 </div>
             </div>
+            </>
         );
     }
 }

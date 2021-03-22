@@ -1,85 +1,31 @@
 import React from 'react';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 // import logo from './static/bus.png';
 import Home from "./components/HomePage";
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
-import Logout from './components/Logout'
+import Logout from './components/Logout';
 import ViewBookings from './components/ViewBookings';
+import Navbar from './components/Navbar';
 
-class App extends React.Component {
-  render() {
-    const afterLogin = (
+function App() {
+  return (
+    <div className="App">
       <Router>
-        <div className="App">
-          <nav className="navbar navbar-expand-lg navbar-light fixed-top">
-            <div className="container">
-              <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
-                <Link className="nav-link" to={"/home"}><img src="static/bus.png" alt="" width='50px' height='50px' /> </Link>
-                <ul className="navbar-nav ml-auto">
-                  <li className="nav-item">
-                    <Link className="nav-link" to={"/view-bookings"}>View Bookings</Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link className="nav-link" to={"/home"}>Home</Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link className="nav-link" to={"/logout"}>Logout</Link>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </nav>
-          <Switch>
-            <Route exact path='/' component={Login} />
-            <Route path="/view-bookings" component={ViewBookings} />
-            <Route path="/home" component={Home} />
-            <Route path="/sign-in" component={Login} />
-            <Route path="/sign-up" component={SignUp} />
-            <Route path="/logout" component={Logout} />
-          </Switch>
-        </div>
+        <Navbar />
+        <Switch>
+          <Route exact path='/' component={Login} />
+          <Route path="/view-bookings" component={ViewBookings} />
+          <Route path="/home" component={Home} />
+          <Route path="/sign-in" component={Login} />
+          <Route path="/sign-up" component={SignUp} />
+          <Route path="/logout" component={Logout} />
+        </Switch>
       </Router>
-    )
-
-    const beforeLogin = (
-      <Router>
-        <div className="App">
-          <nav className="navbar navbar-expand-lg navbar-light fixed-top">
-            <div className="container">
-              <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
-                <Link className="nav-link" to={"/home"}><img src="static/bus.png" alt="" width='50px' height='50px' /> </Link>
-                <ul className="navbar-nav ml-auto">
-                  <li className="nav-item">
-                    <Link className="nav-link" to={"/sign-in"}>Login</Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link className="nav-link" to={"/sign-up"}>Sign up</Link>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </nav>
-          <Switch>
-            <Route exact path='/' component={Login} />
-            <Route path="/view-bookings" component={ViewBookings} />
-            <Route path="/home" component={Home} />
-            <Route path="/sign-in" component={Login} />
-            <Route path="/sign-up" component={SignUp} />
-            <Route path="/logout" component={Logout} />
-          </Switch>
-        </div>
-      </Router>
-    )
-
-    return (
-      <>
-        {localStorage.isLoggedIn ? afterLogin : beforeLogin}
-      </>
-    )
-  }
+    </div>
+  );
 }
 
 export default App;
