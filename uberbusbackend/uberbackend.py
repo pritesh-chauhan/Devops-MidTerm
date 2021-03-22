@@ -20,14 +20,14 @@ from bson.objectid import ObjectId
 # straight mongo access
 from pymongo import MongoClient
 
-mongo_client = MongoClient("mongodb+srv://pritesh:pritesh@cluster0.y9bhh.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+mongo_client = MongoClient("mongodb+srv://pritesh:pritesh@uberbusapp.xg4ni.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
 
 app = Flask(__name__)
 CORS(app)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 def atlas_connect():
-    client = pymongo.MongoClient("mongodb+srv://pritesh:pritesh@cluster0.y9bhh.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+    client = pymongo.MongoClient("mongodb+srv://pritesh:pritesh@uberbusapp.xg4ni.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
     db = client.test   
 
 def tryexcept(requesto, key, default):
