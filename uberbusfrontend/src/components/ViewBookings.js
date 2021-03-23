@@ -57,6 +57,7 @@ export default class ViewBookings extends Component {
         filter = input.value.toUpperCase();
         table = document.getElementById("bookings");
         tr = table.getElementsByTagName("tr");
+        console.log(tr);
         for (i = 0; i < tr.length; i++) {
             td = tr[i].getElementsByTagName("td")[1];
             if (td) {
@@ -114,8 +115,8 @@ export default class ViewBookings extends Component {
                 <Navbar />
             <div>
                 <br /><br /><br />
-                <table id="bookings" hidden={this.state.present}><tr>No bookings available</tr></table>
-                <input type="text" id="myInput" onKeyUp={this.handleSearchKeyUp} placeholder="Search for names.." title="Type in a name" hidden={!this.state.present}/>
+                {/* <table id="bookings1" hidden={this.state.present}><tr>No bookings available</tr></table> */}
+                <input type="text" id="myInput" onKeyUp={this.handleSearchKeyUp} placeholder="Search for names.." title="Type in a operator name"/>
                 {this.state.success !== '' && <span className='success'>{this.state.success}</span>}
 
                 <table id='bookings' hidden={!this.state.present}>
@@ -131,7 +132,7 @@ export default class ViewBookings extends Component {
                         {Object.keys(this.state.bookings).map((booking, index) => (
                             <tr>
                                 <td>{index}</td>
-                                <td>{this.state.bookings[index]["operator"]}</td>
+                                <td key = {this.state.bookings[index]["operator"]} value= {this.state.bookings[index]["operator"]}>{this.state.bookings[index]["operator"]}</td>
                                 <td>{this.state.bookings[index]["source"]}</td>
                                 <td>{this.state.bookings[index]["destination"]}</td>
                                 <td>{this.state.bookings[index]["date"].substring(0, 10)}</td>
